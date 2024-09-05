@@ -172,7 +172,7 @@ function App() {
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Car Model" variant="outlined" fullWidth value={carModel} onChange={(e) => setCarModel(e.target.value)} />
+            <TextField label="Car Make" variant="outlined" fullWidth value={carModel} onChange={(e) => setCarModel(e.target.value)} />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField label="Car Registration" variant="outlined" fullWidth value={carRegistration} onChange={(e) => setCarRegistration(e.target.value)} />

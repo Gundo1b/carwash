@@ -7,7 +7,7 @@ import { Container, Grid, TextField, Button, Checkbox, FormControlLabel, Select,
 function App() {
   const [date, setDate] = useState(new Date());
   const [carBrand, setCarBrand] = useState('');
-  const [carModel, setCarModel] = useState('');
+  const [carMake, setCarMake] = useState('');
   const [carRegistration, setCarRegistration] = useState('');
   const [washed, setWashed] = useState(false);
   const [comment, setComment] = useState('');
@@ -17,7 +17,7 @@ function App() {
   const handleAdd = () => {
     const newData = {
       carBrand,
-      carModel,
+      carMake,
       carRegistration,
       washed: washed ? 'Washed' : 'Not Washed',
       comment,
@@ -35,7 +35,7 @@ function App() {
     // Reset form fields
     setDate(new Date());
     setCarBrand('');
-    setCarModel('');
+    setCarMake('');
     setCarRegistration('');
     setWashed(false);
     setComment('');
@@ -44,7 +44,7 @@ function App() {
   const handleEdit = (index) => {
     const row = data[index];
     setCarBrand(row.carBrand);
-    setCarModel(row.carModel);
+    setCarMake(row.carMake);
     setCarRegistration(row.carRegistration);
     setWashed(row.washed === 'Washed');
     setComment(row.comment);
@@ -90,7 +90,7 @@ function App() {
 
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
-    ['Car Brand', 'Car Model', 'Car Registration', 'Washed', 'Comment'].forEach(header => {
+    ['Car Brand', 'Car Make', 'Car Registration', 'Washed', 'Comment'].forEach(header => {
       const th = document.createElement('th');
       th.style.borderBottom = '2px solid #ddd';
       th.style.padding = '8px';
@@ -127,7 +127,7 @@ function App() {
   const columns = React.useMemo(
     () => [
       { Header: 'Car Brand', accessor: 'carBrand' },
-      { Header: 'Car Model', accessor: 'carModel' },
+      { Header: 'Car Make', accessor: 'carMake' },
       { Header: 'Car Registration', accessor: 'carRegistration' },
       { Header: 'Washed', accessor: 'washed' },
       { Header: 'Comment', accessor: 'comment' },
@@ -172,48 +172,52 @@ function App() {
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField label="Car Make" variant="outlined" fullWidth value={carModel} onChange={(e) => setCarModel(e.target.value)} />
+            <TextField label="Car Make" variant="outlined" fullWidth value={carMake} onChange={(e) => setCarMake(e.target.value)} />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField label="Car Registration" variant="outlined" fullWidth value={carRegistration} onChange={(e) => setCarRegistration(e.target.value)} />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12}>
             <FormControlLabel control={<Checkbox checked={washed} onChange={(e) => setWashed(e.target.checked)} />} label="Washed" />
           </Grid>
           <Grid item xs={12}>
-            <TextField label="Comment" variant="outlined" multiline rows={4} fullWidth value={comment} onChange={(e) => setComment(e.target.value)} />
-          </Grid>
-          <Grid item xs={12} className="no-print">
-            <Button variant="contained" color="primary" onClick={handleAdd}>{editIndex === -1 ? 'Add Car' : 'Update Car'}</Button>
-            <Button variant="contained" color="secondary" onClick={handlePrint} style={{ marginLeft: '10px' }}>Print Report</Button>
+            <TextField label="Comment" variant="outlined" fullWidth value={comment} onChange={(e) => setComment(e.target.value)} />
           </Grid>
           <Grid item xs={12}>
-            <table {...getTableProps()} style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                {headerGroups.map(headerGroup => (
-                  <tr {...headerGroup.getHeaderGroupProps()}>
-                    {headerGroup.headers.map(column => (
-                      <th {...column.getHeaderProps()}>{column.render('Header')}</th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody {...getTableBodyProps()}>
-                {rows.map(row => {
-                  prepareRow(row);
-                  return (
-                    <tr {...row.getRowProps()}>
-                      {row.cells.map(cell => (
-                        <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                      ))}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            <Button variant="contained" color="primary" onClick={handleAdd}>
+              {editIndex !== -1 ? 'Update' : 'Add'}
+            </Button>
           </Grid>
         </Grid>
       </Paper>
+      
+      <Box mt={3}>
+        <Button variant="contained" color="secondary" onClick={handlePrint}>Print</Button>
+      </Box>
+
+      <table {...getTableProps()} style={{ marginTop: '20px', width: '100%', borderCollapse: 'collapse' }}>
+        <thead>
+          {headerGroups.map(headerGroup => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map(column => (
+                <th {...column.getHeaderProps()} style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f2f2f2' }}>{column.render('Header')}</th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {rows.map(row => {
+            prepareRow(row);
+            return (
+              <tr {...row.getRowProps()}>
+                {row.cells.map(cell => (
+                  <td {...cell.getCellProps()} style={{ border: '1px solid #ddd', padding: '8px' }}>{cell.render('Cell')}</td>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </Container>
   );
 }

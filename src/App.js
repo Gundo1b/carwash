@@ -16,7 +16,6 @@ function App() {
 
   const handleAdd = () => {
     const newData = {
-      date: date.toDateString(),
       carBrand,
       carModel,
       carRegistration,
@@ -44,7 +43,6 @@ function App() {
 
   const handleEdit = (index) => {
     const row = data[index];
-    setDate(new Date(row.date));
     setCarBrand(row.carBrand);
     setCarModel(row.carModel);
     setCarRegistration(row.carRegistration);
@@ -70,7 +68,9 @@ function App() {
     printWindow.document.write('th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }');
     printWindow.document.write('th { background-color: #f2f2f2; }');
     printWindow.document.write('h1, p { text-align: center; }');
-    printWindow.document.write('}</style>');
+    printWindow.document.write('.no-print { display: none; }'); // Hide elements with class "no-print"
+    printWindow.document.write('}');
+    printWindow.document.write('</style>');
     printWindow.document.write('</head><body>');
 
     printWindow.document.write('<div class="logo">');
@@ -82,7 +82,6 @@ function App() {
     const numberOfWashedCars = data.filter(item => item.washed === 'Washed').length;
     printWindow.document.write('<div style="margin-bottom: 20px; font-size: 16px; text-align: center;">');
     printWindow.document.write(`<p><strong>Total Number of Washed Cars: ${numberOfWashedCars}</strong></p>`);
-    printWindow.document.write(`<p><strong>Date: ${date.toDateString()}</strong></p>`);
     printWindow.document.write('</div>');
 
     const tableHTML = document.createElement('table');
@@ -103,16 +102,14 @@ function App() {
     tableHTML.appendChild(thead);
 
     const tbody = document.createElement('tbody');
-    document.querySelectorAll('tbody tr').forEach(row => {
+    data.forEach((row) => {
       const newRow = document.createElement('tr');
-      Array.from(row.children).forEach((cell, index) => {
-        if (index > 0) {
-          const newCell = document.createElement('td');
-          newCell.style.borderBottom = '1px solid #ddd';
-          newCell.style.padding = '8px';
-          newCell.innerHTML = cell.innerHTML;
-          newRow.appendChild(newCell);
-        }
+      Object.values(row).forEach(value => {
+        const newCell = document.createElement('td');
+        newCell.style.borderBottom = '1px solid #ddd';
+        newCell.style.padding = '8px';
+        newCell.innerText = value;
+        newRow.appendChild(newCell);
       });
       tbody.appendChild(newRow);
     });
@@ -129,17 +126,16 @@ function App() {
 
   const columns = React.useMemo(
     () => [
-      { Header: 'Date', accessor: 'date' },
       { Header: 'Car Brand', accessor: 'carBrand' },
       { Header: 'Car Model', accessor: 'carModel' },
       { Header: 'Car Registration', accessor: 'carRegistration' },
       { Header: 'Washed', accessor: 'washed' },
       { Header: 'Comment', accessor: 'comment' },
       { Header: 'Actions', Cell: ({ row }) => (
-        <>
+        <div className="no-print">
           <Button variant="contained" color="primary" onClick={() => handleEdit(row.index)}>Edit</Button>
           <Button variant="contained" color="secondary" onClick={() => handleDelete(row.index)} style={{ marginLeft: '10px' }}>Delete</Button>
-        </>
+        </div>
       ) },
     ],
     [data]
@@ -185,45 +181,39 @@ function App() {
             <FormControlLabel control={<Checkbox checked={washed} onChange={(e) => setWashed(e.target.checked)} />} label="Washed" />
           </Grid>
           <Grid item xs={12}>
-            <TextField label="Comment" variant="outlined" fullWidth value={comment} onChange={(e) => setComment(e.target.value)} />
+            <TextField label="Comment" variant="outlined" multiline rows={4} fullWidth value={comment} onChange={(e) => setComment(e.target.value)} />
           </Grid>
-          <Grid item xs={12} style={{ textAlign: 'center' }}>
-            <Button variant="contained" color="primary" onClick={handleAdd}>{editIndex !== -1 ? 'Update Car' : 'Add Car'}</Button>
+          <Grid item xs={12} className="no-print">
+            <Button variant="contained" color="primary" onClick={handleAdd}>{editIndex === -1 ? 'Add Car' : 'Update Car'}</Button>
+            <Button variant="contained" color="secondary" onClick={handlePrint} style={{ marginLeft: '10px' }}>Print Report</Button>
+          </Grid>
+          <Grid item xs={12}>
+            <table {...getTableProps()} style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                {headerGroups.map(headerGroup => (
+                  <tr {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map(column => (
+                      <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <tbody {...getTableBodyProps()}>
+                {rows.map(row => {
+                  prepareRow(row);
+                  return (
+                    <tr {...row.getRowProps()}>
+                      {row.cells.map(cell => (
+                        <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                      ))}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </Grid>
         </Grid>
       </Paper>
-      <Box mt={5}>
-        <table {...getTableProps()} style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
-          <thead>
-            {headerGroups.map(headerGroup => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map(column => (
-                  <th {...column.getHeaderProps()} style={{ borderBottom: '2px solid #ddd', padding: '8px', textAlign: 'left', backgroundColor: '#f2f2f2' }}>
-                    {column.render('Header')}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map(row => {
-              prepareRow(row);
-              return (
-                <tr {...row.getRowProps()}>
-                  {row.cells.map(cell => (
-                    <td {...cell.getCellProps()} style={{ borderBottom: '1px solid #ddd', padding: '8px' }}>
-                      {cell.render('Cell')}
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </Box>
-      <Box mt={3} textAlign="center">
-        <Button variant="contained" color="primary" onClick={handlePrint}>Print Report</Button>
-      </Box>
     </Container>
   );
 }

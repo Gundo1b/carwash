@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/carwash/static/css/main.c800aa68.css",
-    "main.js": "/carwash/static/js/main.10f08602.js",
+    "main.js": "/carwash/static/js/main.c0e0c4d5.js",
     "static/js/453.3c45502f.chunk.js": "/carwash/static/js/453.3c45502f.chunk.js",
     "index.html": "/carwash/index.html",
     "main.c800aa68.css.map": "/carwash/static/css/main.c800aa68.css.map",
-    "main.10f08602.js.map": "/carwash/static/js/main.10f08602.js.map",
+    "main.c0e0c4d5.js.map": "/carwash/static/js/main.c0e0c4d5.js.map",
     "453.3c45502f.chunk.js.map": "/carwash/static/js/453.3c45502f.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.c800aa68.css",
-    "static/js/main.10f08602.js"
+    "static/js/main.c0e0c4d5.js"
   ]
 }
